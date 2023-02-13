@@ -6,12 +6,18 @@ import ErrorBoundary from "./ErrorBoundary";
 import Carousel from "./Carousel";
 import fetchPet from "./fetchPet";
 import Modal from "./Modal";
+import { PetAPIResponse } from "./APIResponsesTypes";
 
 const Details = () => {
+  const { id } = useParams();
+
+  if (!id) {
+    throw new Error('There is no id');
+  }
+
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const [_, setAdoptedPet] = useContext(AdoptedPetContext);
-  const { id } = useParams();
   const results = useQuery(["details", id], fetchPet);
 
   if (results.isError) {

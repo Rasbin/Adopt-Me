@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useGetPetQuery } from "./petApiService";
 import { adopt } from './adoptedPetSlice';
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import ErrorBoundary from "./ErrorBoundary";
 import Carousel from "./Carousel";
-import fetchPet from "./fetchPet";
 import Modal from "./Modal";
 
 const Details = () => {
@@ -17,14 +16,10 @@ const Details = () => {
 
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const results = useQuery(["details", id], fetchPet);
+  const { isLoading, data: pet } = useGetPetQuery(id);
   const dispatch = useDispatch();
 
-  if (results.isError) {
-    return <h2>Oh no! Error Occured.</h2>;
-  }
-
-  if (results.isLoading) {
+  if (isLoading) {
     return (
       <div className="loading-pane">
         <h2 className="loader">🌀</h2>
@@ -32,10 +27,6 @@ const Details = () => {
     );
   }
 
-  const pet = results?.data?.pets[0];
-  if (!pet) {
-    throw new Error('no pet');
-  }
 
   return (
     <div className="details">
